@@ -516,8 +516,17 @@ namespace CommLiby
         {
             try
             {
-                if (type == typeof(byte))
+                if (type == typeof(string))
                 {
+                    return val?.ToString();
+                }
+                else if (type == typeof(byte))
+                {
+                    return Convert.ToByte(val);
+                }
+                else if (type == typeof(byte?))
+                {
+                    if (val == null) return null;
                     return Convert.ToByte(val);
                 }
                 else if (type == typeof(byte[]))
@@ -528,10 +537,18 @@ namespace CommLiby
                 {
                     return Convert.ToInt16(val);
                 }
+                else if (type == typeof(short?))
+                {
+                    if (val == null) return null;
+                    return Convert.ToInt16(val);
+                }
                 else if (type == typeof(ushort))
                 {
-                    if (val?.ToString() == "-1")
-                        return ushort.MaxValue;
+                    return Convert.ToUInt16(val);
+                }
+                else if (type == typeof(ushort?))
+                {
+                    if (val == null) return null;
                     return Convert.ToUInt16(val);
                 }
                 else if (type == typeof(int)) //int类型
@@ -545,51 +562,81 @@ namespace CommLiby
                 }
                 else if (type == typeof(uint))
                 {
-                    try
-                    {
-                        return Convert.ToUInt32(val);
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine(ex);
-                        //超出范围默认为0
-                        return (uint)0;
-                    }
+                    return Convert.ToUInt32(val);
+                }
+                else if (type == typeof(uint?))
+                {
+                    if (val == null) return null;
+                    return Convert.ToUInt32(val);
                 }
                 else if (type == typeof(long))
                 {
+                    return Convert.ToInt64(val);
+                }
+                else if (type == typeof(long?))
+                {
+                    if (val == null) return null;
                     return Convert.ToInt64(val);
                 }
                 else if (type == typeof(ulong))
                 {
                     return Convert.ToUInt64(val);
                 }
+                else if (type == typeof(ulong?))
+                {
+                    if (val == null) return null;
+                    return Convert.ToUInt64(val);
+                }
                 else if (type == typeof(float))
                 {
+                    return Convert.ToSingle(val);
+                }
+                else if (type == typeof(float?))
+                {
+                    if (val == null) return null;
                     return Convert.ToSingle(val);
                 }
                 else if (type == typeof(double))
                 {
                     return Convert.ToDouble(val);
                 }
+                else if (type == typeof(double?))
+                {
+                    if (val == null) return null;
+                    return Convert.ToDouble(val);
+                }
                 else if (type == typeof(decimal))
                 {
+                    return Convert.ToDecimal(val);
+                }
+                else if (type == typeof(decimal?))
+                {
+                    if (val == null) return null;
                     return Convert.ToDecimal(val);
                 }
                 else if (type == typeof(bool))
                 {
                     return Convert.ToBoolean(val);
                 }
+                else if (type == typeof(bool?))
+                {
+                    if (val == null) return null;
+                    return Convert.ToBoolean(val);
+                }
                 else if (type == typeof(DateTime))
                 {
                     return Convert.ToDateTime(val);
                 }
+                else if (type == typeof(DateTime?))
+                {
+                    if (val == null) return null;
+                    return Convert.ToDateTime(val);
+                }
                 else if (type == typeof(BinDateTime))
                 {
+                    if (val == null) return null;
                     return BinDateTime.NewWithDateTime(Convert.ToDateTime(val));
                 }
-                else if (type == typeof(string))
-                    return val.ToString();
                 else
                     return val;
             }
