@@ -15,6 +15,8 @@
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkProfile>Profile14</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -72,7 +74,25 @@
   <ItemGroup>
     <Compile Include="Amap\regeo.cs" />
     <Compile Include="BinDateTime.cs" />
+    <Compile Include="CheckSum\Crc32.cs" />
     <Compile Include="ClassBase.cs" />
+    <Compile Include="CheckSum\Adler32.cs" />
+    <Compile Include="Compress\CompressionStaticTree.cs" />
+    <Compile Include="Compress\CompressionStream.cs" />
+    <Compile Include="Compress\CompressionTree.cs" />
+    <Compile Include="Compress\Deflater.cs" />
+    <Compile Include="Compress\DeflaterOptions.cs" />
+    <Compile Include="CheckSum\IChecksumAlgorithm.cs" />
+    <Compile Include="Compress\Inflater.cs" />
+    <Compile Include="Compress\InflaterBlocks.cs" />
+    <Compile Include="Compress\InflaterBlocksContext.cs" />
+    <Compile Include="Compress\InflaterCodes.cs" />
+    <Compile Include="Compress\InflaterTree.cs" />
+    <Compile Include="Compress\InflaterTreeConstants.cs" />
+    <Compile Include="Compress\OutputStream.cs" />
+    <Compile Include="Compress\StreamException.cs" />
+    <Compile Include="Compress\TreeConstants.cs" />
+    <Compile Include="Compress\Utils.cs" />
     <Compile Include="CWebClient.cs" />
     <Compile Include="Cyhk\Command.cs" />
     <Compile Include="Cyhk\CommandID.cs" />
@@ -125,14 +145,12 @@
     <Compile Include="WebTools.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Cellbi.SvZLib">
-      <HintPath>..\..\..\Lib\Cellbi.SvZLib.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

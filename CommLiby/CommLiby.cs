@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CommLiby
 {
@@ -17,6 +18,7 @@ namespace CommLiby
         #endregion
 
         #region 常用功能
+
         /// <summary>
         /// 获取一个GUID作为数据库表或者表单的主键
         /// </summary>
@@ -65,13 +67,16 @@ namespace CommLiby
             {
                 d = c - b - 1; //小数点後面有多少位
             }
+
             if (n < d) //如果小数点后的位数大於要取的位数，就截取前b+1+n位 得到最後结果
             {
                 string Last = num.ToString().Substring(0, b + 1 + n);
                 num = double.Parse(Last);
             }
+
             return num;
         }
+
         #endregion
 
         #region 手机号码相关
@@ -113,11 +118,14 @@ namespace CommLiby
             {
                 if (IsTel(phonestr)) return true;
             }
+
             return false;
         }
+
         #endregion
 
         #region 验证是否ip地址
+
         /// <summary>
         /// 验证是否是正确的ip地址
         /// </summary>
@@ -129,9 +137,11 @@ namespace CommLiby
             string regstr = @"^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$";
             return Regex.IsMatch(ipv4, regstr);
         }
+
         #endregion
 
         #region JSON相关
+
         /// <summary>
         /// 获得值
         /// </summary>
@@ -147,8 +157,10 @@ namespace CommLiby
             {
                 // ignored
             }
+
             return value;
         }
+
         /// <summary>
         /// 将值转换成JSON串
         /// </summary>
@@ -185,6 +197,7 @@ namespace CommLiby
         #endregion
 
         #region 验证是否为数字格式
+
         /// <summary>
         /// 验证是否为数字格式（包括浮点型）
         /// </summary>
@@ -194,9 +207,11 @@ namespace CommLiby
         {
             bool isNum;
             double retNum;
-            isNum = Double.TryParse(Convert.ToString(Expression), System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+            isNum = Double.TryParse(Convert.ToString(Expression), System.Globalization.NumberStyles.Any,
+                System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
             return isNum;
         }
+
         /// <summary>
         /// 验证s是否为数字格式（只限整型）
         /// </summary>
@@ -208,6 +223,7 @@ namespace CommLiby
             {
                 return false;
             }
+
             foreach (char c in str)
             {
                 if (!Char.IsNumber(c))
@@ -215,8 +231,10 @@ namespace CommLiby
                     return false;
                 }
             }
+
             return true;
         }
+
         /// <summary>
         /// 验证是否为
         /// </summary>
@@ -229,13 +247,16 @@ namespace CommLiby
             bool suc = byte.TryParse(str, out b);
             return suc;
         }
+
         #endregion
 
         #region 线程相关
+
         ///// <summary>
         ///// 主线程同步上下文
         ///// </summary>
         public static SynchronizationContext MainContext { get; private set; }
+
         /// <summary>
         /// 设置主线程
         /// </summary>
@@ -254,47 +275,33 @@ namespace CommLiby
         public static bool InvokeMethodOnMainThread(Action func, bool async = true)
         {
             if (func == null) return false;
+
             if (MainContext == null)
             {
-                InvokeFunc(func);
+                InvokeAction(func);
                 return false;
-            };
+            }
 
             if (SynchronizationContext.Current == null || SynchronizationContext.Current != MainContext)
             {
                 if (async)
                 {
-                    MainContext.Post(state =>
-                    {
-                        InvokeFunc(func);
-                    }, null);
+                    MainContext.Post(state => { InvokeAction(func); }, null);
                 }
                 else
                 {
-                    //ManualResetEvent resetEvent = new ManualResetEvent(false);
-                    //resetEvent.Reset();
-                    MainContext.Send(state =>
-                    {
-                        InvokeFunc(func);
-                    }, null);
-                    //MainContext.Post(state =>
-                    //{
-
-                    //    InvokeFunc(func);
-                    //    resetEvent.Set();
-                    //}, null);
-                    //resetEvent.WaitOne();
+                    MainContext.Send(state => { InvokeAction(func); }, null);
                 }
             }
             else
             {
-                InvokeFunc(func);
+                InvokeAction(func);
             }
 
             return true;
         }
 
-        private static void InvokeFunc(Action func)
+        private static void InvokeAction(Action func)
         {
             try
             {
@@ -302,17 +309,26 @@ namespace CommLiby
             }
             catch (Exception e)
             {
-                if (e is InvalidOperationException) { }
-                else if (e is TargetInvocationException) { }
-                else if (Debugger.IsAttached)
-                {
-                    throw e;
-                }
+                throw e;
             }
         }
+
+        private static T InvokeFunc<T>(Func<T> func)
+        {
+            try
+            {
+                return func();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         #endregion
 
         #region 字节转换相关
+
         public static void GetBytes(string str, byte[] b, int Start = 0)
         {
             int len = str.Length;
@@ -324,6 +340,7 @@ namespace CommLiby
                 }
             }
         }
+
         public static void GetBytes(UInt16 value, byte[] b, int Start = 0)
         {
             if (BitConverter.IsLittleEndian)
@@ -337,6 +354,7 @@ namespace CommLiby
                 b[Start + 1] = (byte)(value >> 8);
             }
         }
+
         public static void GetBytes(UInt32 value, byte[] b, int Start = 0)
         {
             if (BitConverter.IsLittleEndian)
@@ -355,6 +373,7 @@ namespace CommLiby
                 b[Start + 3] = (byte)(value >> 24);
             }
         }
+
         public static void GetBytes(UInt64 value, byte[] b, int Start = 0)
         {
             if (BitConverter.IsLittleEndian)
@@ -381,6 +400,7 @@ namespace CommLiby
                 b[Start + 7] = (byte)(value >> 56);
             }
         }
+
         public static void GetBytes(Int16 value, byte[] b, int Start = 0)
         {
             if (BitConverter.IsLittleEndian)
@@ -394,6 +414,7 @@ namespace CommLiby
                 b[Start + 1] = (byte)(value >> 8);
             }
         }
+
         public static void GetBytes(Int32 value, byte[] b, int Start = 0)
         {
             if (BitConverter.IsLittleEndian)
@@ -412,6 +433,7 @@ namespace CommLiby
                 b[Start + 3] = (byte)(value >> 24);
             }
         }
+
         public static void GetBytes(Int64 value, byte[] b, int Start = 0)
         {
             if (BitConverter.IsLittleEndian)
@@ -438,6 +460,7 @@ namespace CommLiby
                 b[Start + 7] = (byte)(value >> 56);
             }
         }
+
         public static UInt16 GetUInt16(byte[] b, int Start = 0)
         {
             if (BitConverter.IsLittleEndian)
@@ -449,6 +472,7 @@ namespace CommLiby
                 return (UInt16)(b[0] | b[1] << 8);
             }
         }
+
         public static UInt32 GetUInt32(byte[] b, int Start = 0)
         {
             if (BitConverter.IsLittleEndian)
@@ -460,17 +484,22 @@ namespace CommLiby
                 return (UInt32)(b[3] | b[2] << 8 | b[1] << 16 | b[0] << 24);
             }
         }
+
         public static UInt64 GetUInt64(byte[] b, int Start = 0)
         {
             if (BitConverter.IsLittleEndian)
             {
-                return (UInt64)((UInt64)b[0] | (UInt64)b[1] << 8 | (UInt64)b[2] << 16 | (UInt64)b[3] << 24 | (UInt64)b[4] << 32 | (UInt64)b[5] << 40 | (UInt64)b[6] << 48 | (UInt64)b[7] << 56);
+                return (UInt64)((UInt64)b[0] | (UInt64)b[1] << 8 | (UInt64)b[2] << 16 | (UInt64)b[3] << 24 |
+                                 (UInt64)b[4] << 32 | (UInt64)b[5] << 40 | (UInt64)b[6] << 48 | (UInt64)b[7] << 56);
             }
             else
             {
-                return (UInt64)((UInt64)b[7] | (UInt64)b[6] << 8 | (UInt64)b[5] << 16 | (UInt64)b[4] << 24 | (UInt64)b[3] << 32 | (UInt64)b[2] << 40 | (UInt64)b[1] << 48 | (UInt64)b[0] << 56); ;
+                return (UInt64)((UInt64)b[7] | (UInt64)b[6] << 8 | (UInt64)b[5] << 16 | (UInt64)b[4] << 24 |
+                                 (UInt64)b[3] << 32 | (UInt64)b[2] << 40 | (UInt64)b[1] << 48 | (UInt64)b[0] << 56);
+                ;
             }
         }
+
         public static Int16 GetInt16(byte[] b, int Start = 0)
         {
             if (BitConverter.IsLittleEndian)
@@ -482,6 +511,7 @@ namespace CommLiby
                 return (Int16)(b[0] | b[1] << 8);
             }
         }
+
         public static Int32 GetInt32(byte[] b, int Start = 0)
         {
             if (BitConverter.IsLittleEndian)
@@ -493,17 +523,22 @@ namespace CommLiby
                 return (Int32)(b[3] | b[2] << 8 | b[1] << 16 | b[0] << 24);
             }
         }
+
         public static Int64 GetInt64(byte[] b, int Start = 0)
         {
             if (BitConverter.IsLittleEndian)
             {
-                return (Int64)((Int64)b[0] | (Int64)b[1] << 8 | (Int64)b[2] << 16 | (Int64)b[3] << 24 | (Int64)b[4] << 32 | (Int64)b[5] << 40 | (Int64)b[6] << 48 | (Int64)b[7] << 56);
+                return (Int64)((Int64)b[0] | (Int64)b[1] << 8 | (Int64)b[2] << 16 | (Int64)b[3] << 24 |
+                                (Int64)b[4] << 32 | (Int64)b[5] << 40 | (Int64)b[6] << 48 | (Int64)b[7] << 56);
             }
             else
             {
-                return (Int64)((Int64)b[7] | (Int64)b[6] << 8 | (Int64)b[5] << 16 | (Int64)b[4] << 24 | (Int64)b[3] << 32 | (Int64)b[2] << 40 | (Int64)b[1] << 48 | (Int64)b[0] << 56); ;
+                return (Int64)((Int64)b[7] | (Int64)b[6] << 8 | (Int64)b[5] << 16 | (Int64)b[4] << 24 |
+                                (Int64)b[3] << 32 | (Int64)b[2] << 40 | (Int64)b[1] << 48 | (Int64)b[0] << 56);
+                ;
             }
         }
+
         #endregion
 
         /// <summary>
@@ -555,7 +590,7 @@ namespace CommLiby
                 {
                     return Convert.ToInt32(val);
                 }
-                else if (type == typeof(int?))  //可空int类型
+                else if (type == typeof(int?)) //可空int类型
                 {
                     if (val == null) return null;
                     return Convert.ToInt32(val);
@@ -616,11 +651,33 @@ namespace CommLiby
                 }
                 else if (type == typeof(bool))
                 {
+                    if (val is string)
+                    {
+                        if (val.ToString() == "0")
+                        {
+                            return false;
+                        }
+                        else if (val.ToString() == "1")
+                        {
+                            return true;
+                        }
+                    }
                     return Convert.ToBoolean(val);
                 }
                 else if (type == typeof(bool?))
                 {
                     if (val == null) return null;
+                    if (val is string)
+                    {
+                        if (val.ToString() == "0")
+                        {
+                            return false;
+                        }
+                        else if (val.ToString() == "1")
+                        {
+                            return true;
+                        }
+                    }
                     return Convert.ToBoolean(val);
                 }
                 else if (type == typeof(DateTime))
@@ -644,6 +701,17 @@ namespace CommLiby
             {
                 return "err_" + ex.Message;
             }
+        }
+
+        /// <summary>
+        /// 数据类型转换
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="val">数据值</param>
+        /// <returns></returns>
+        public static T Convert2Type<T>(object val)
+        {
+            return (T)Convert2Type(typeof(T), val);
         }
 
         /// <summary>

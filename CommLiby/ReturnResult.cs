@@ -122,6 +122,7 @@ namespace CommLiby
         {
             return tag as JArray;
         }
+
         /// <summary>
         /// 将Tag中的内容转换为对象
         /// </summary>
